@@ -24,7 +24,7 @@ def _get_rec(doc):
 def query(q, limit, index_name='dwc', sort=None, curs=search.Cursor()):
     if not curs:
         curs = search.Cursor()
-    
+
     if q.startswith('id:'):
         did = q.split(':')[1].strip()
         namespace = namespace_manager.get_namespace()

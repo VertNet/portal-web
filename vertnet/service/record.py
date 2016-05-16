@@ -84,12 +84,29 @@ class RecordService(remote.Service):
 #            % (keywords, RECORD_VERSION))
 #        logging.info('REQUEST LATLON %s\nVersion: %s' 
 #            % (self.cityLatLong, RECORD_VERSION) )
-        result = vnsearch.query(keywords, limit, sort=sort, curs=curs)
-        if len(result) == 4:
-            recs, cursor, count, query_version = result
+        # result = vnsearch.query(keywords, limit, sort=sort, curs=curs)
+        params = json.dumps({
+            "q": keywords,
+            "l": limit,
+            "s": sort,
+            "c": message.cursor
+        })
+        params = {"q": params}
+        url = "?".join([SEARCH_API, urllib.urlencode(params)])
+        logging.info(url)
+        result = urllib2.urlopen(url=url)
+        result = json.loads(result.read())
+        logging.info(result.keys())
+
+        if len(result) == 9:
+            # recs, cursor, count, query_version = result
+            recs = result['recs']
+            cursor = result['cursor']
+            count = result['matching_records']
+            query_version = result['api_version']
             # Build json for search counts
             res_counts = vnutil.search_resource_counts(recs)
-            
+
             if not message.cursor:
                 type = 'query'
             else:
@@ -119,12 +136,14 @@ class RecordService(remote.Service):
             response = RecordList(error=unicode(error))
             return response
 
-        if cursor:
-            cursor = cursor.web_safe_string
+        # if cursor:
+        #     cursor = cursor.web_safe_string
 
         items = [RecordPayload(id=x['keyname'], json=json.dumps(x)) \
             for x in recs if x]
 
+        if count == ">10000":
+            count = 10001
         response = RecordList(items=items, cursor=cursor, count=count)
         return response
 
