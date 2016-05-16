@@ -17,6 +17,20 @@
 # Note that static assets are sources from www/ which contains full
 # sourcecode without minification.
 
+# CODEBASE INFO
+# Last pushed to master branch: 2016-05-16T13:05:09+CEST
+# Last change to master branch: Basic search portal works
+#
+# DEPLOYMENT INFO
+# Last deployed dev version: 2016-05-16T13:05:14+CEST
+# Last deployed prod version: ?
+# command: gcloud preview app deploy portal-web.yaml
+# args:
+#   --project vertnet-portal  # Optional, no need if gcloud is configured to use this project
+#   --version prod|dev  # Indicates version to use. If 'Prod', --promote flag should be used
+#   --promote  # Optional, removes the version id from the deployment URL. Skip for testing and/or dev version
+
+
 module: portal-web
 runtime: python27
 api_version: 1
