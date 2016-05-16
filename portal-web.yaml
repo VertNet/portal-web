@@ -16,11 +16,11 @@
 # This is the App Engine configuration file for local development.
 # Note that static assets are sources from www/ which contains full
 # sourcecode without minification.
-application: vertnet-portal
-version: stats
+
+module: portal-web
 runtime: python27
-threadsafe: true
 api_version: 1
+threadsafe: true
 
 libraries:
 - name: jinja2
@@ -49,11 +49,11 @@ handlers:
 
 # APIs
 
-- url: /api/search.*
-  script: vertnet.service.api.handlers
+# - url: /api/search.*
+#   script: vertnet.service.api.handlers
 
-- url: /api/download.*
-  script: vertnet.service.api.handlers
+# - url: /api/download.*
+#   script: vertnet.service.api.handlers
 
 - url: /api/user/get
   script: vertnet.service.user.handler
@@ -61,8 +61,8 @@ handlers:
 - url: /api/github.*
   script: vertnet.service.github.handler
 
-- url: /service/download.*
-  script: vertnet.service.download.api
+# - url: /service/download.*
+#   script: vertnet.service.download.api
 
 - url: /apitracker.*
   script: vertnet.service.tracker.api
@@ -85,13 +85,13 @@ handlers:
 - url: /service/stats.*
   script: vertnet.service.stats.main
 
-- url: /service/repochecker.*
-  script: vertnet.service.repochecker.main
+# - url: /service/repochecker.*
+#   script: vertnet.service.repochecker.main
 
 # CRON tasks
 
-- url: /tasks/daily_portal_stats.*
-  script: vertnet.service.tasks.daily_portal_stats.main
+# - url: /tasks/daily_portal_stats.*
+#   script: vertnet.service.tasks.daily_portal_stats.main
 
 # Main handler
 

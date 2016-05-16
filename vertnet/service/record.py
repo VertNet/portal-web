@@ -8,10 +8,14 @@ from protorpc.wsgi import service
 from google.appengine.datastore.datastore_query import Cursor
 from google.appengine.api import taskqueue
 from google.appengine.api import search
+import urllib
+import urllib2
 import logging
 import json
 
 RECORD_VERSION='record.py 2015-08-28T23:42:06+02:00'
+
+SEARCH_API = "http://api-module.vertnet-portal.appspot.com/api/search"
 
 def record_list(limit, cursor, q, message=False):
     """Return CommentList or triple (comments, next_cursor, more)."""
@@ -33,7 +37,17 @@ class RecordService(remote.Service):
     @remote.method(RecordPayload, RecordPayload)
     def get(self, message):
         """Return a RecordList."""
-        recs, cursor, count, version = vnsearch.query('id:%s' % message.id, 1)
+        # recs, cursor, count, version = vnsearch.query('id:%s' % message.id, 1)
+        params = json.dumps({"q": "id:%s" % message.id, "l": 1})
+        params = {"q": params}
+        url = "?".join([SEARCH_API, urllib.urlencode(params)])
+        res = urllib2.urlopen(url=url)
+        content = json.loads(res.read())
+        recs = content['recs']
+        cursor = content['cursor']
+        count = content['matching_records']
+        version = content['api_version']
+
         return RecordPayload(id=message.id, json=json.dumps(recs[0]))
 
     @remote.method(RecordList, RecordList)
