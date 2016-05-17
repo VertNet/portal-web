@@ -1,7 +1,6 @@
 """API handlers for VertNet records."""
 
 from vertnet.service.model import RecordIndex, Record, RecordList, RecordPayload
-from vertnet.service import search as vnsearch
 from vertnet.service import util as vnutil
 from protorpc import remote
 from protorpc.wsgi import service
@@ -13,7 +12,7 @@ import urllib2
 import logging
 import json
 
-RECORD_VERSION='record.py 2015-08-28T23:42:06+02:00'
+RECORD_VERSION='2016-05-17T09:29:00+CEST'
 
 SEARCH_API = "http://api-module.vertnet-portal.appspot.com/api/search"
 

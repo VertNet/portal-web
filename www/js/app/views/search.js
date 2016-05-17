@@ -42,7 +42,8 @@ define([
     initialize: function (options, app) {
       this.app = app;
       this.NUMBER_FOUND_ACCURACY = 10000;
-      this.DOWNLOAD_THRES = 1000;
+      // this.DOWNLOAD_THRES = 1000;
+      this.DOWNLOAD_THRES = 0;
       this.PAGE_SIZE = 100; // For optimal browser performance
 //      this.PAGE_SIZE = 400; // For optimal query performance
       this.keywords = []; // Search query keywords
@@ -54,6 +55,7 @@ define([
       this.countLoaded = 0;
       this.model = new SearchModel();
       this.spatialSearch = false;
+      this.DOWNLOAD_URL = 'http://api-module.vertnet-portal.appspot.com/api/download'
       mps.publish('spin', [true]);
     },
 
@@ -962,11 +964,22 @@ define([
         var name = this.$('#nameval').val();
         var count = this.count; 
         var error = false;
+        // var request = {
+        //   c: count,
+        //   e: email, 
+        //   n: name.replace(/ /g,'_'), 
+        //   q: JSON.stringify({"q":this.keywords.join(" ")})
+        // }
         var request = {
-          count: count,
-          email: email, 
-          name: name.replace(/ /g,'_'), 
-          keywords: JSON.stringify(this.keywords)}
+          q: JSON.stringify({
+            "q": this.keywords.join(" "),  // query parameters
+            "e": email,                    // email to send notification to
+            "n": name.replace(/ /g,'_'),   // name of the download file
+            "r": count                     // record count (for direct download)
+          })
+        }
+
+        console.log(request);
 
         e.preventDefault();
         if (this.$('#email').is(':visible') && !email) {
@@ -986,10 +999,10 @@ define([
         }
         
         if (count <= this.DOWNLOAD_THRES) {
-          window.location.href = '/service/download?' + $.param(request);
+          window.location.href = this.DOWNLOAD_URL + '?' + $.param(request);
           this.$('#myModal').modal('hide');
         } else {
-          $.get('/service/download', request);
+          $.get(this.DOWNLOAD_URL, request);
           this.$('#bigModalLabel').hide();
           this.$('#smallModalLabel').hide();
           this.$('#confirmation').show();
