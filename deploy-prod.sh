@@ -1,0 +1,1 @@
+gcloud preview app deploy --version prod --promote portal-web.yaml
