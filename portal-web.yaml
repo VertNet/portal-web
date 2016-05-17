@@ -18,12 +18,12 @@
 # sourcecode without minification.
 
 # CODEBASE INFO
-# Last pushed to master branch: 2016-05-16T13:05:09+CEST
-# Last change to master branch: Basic search portal works
+# Last pushed to master branch: 2016-05-17T12:44:22+CEST
+# Last change to master branch: Basic download portal works
 #
 # DEPLOYMENT INFO
-# Last deployed dev version: 2016-05-16T13:05:14+CEST
-# Last deployed prod version: ?
+# Last deployed dev version: 2016-05-17T12:44:22+CEST
+# Last deployed prod version: 2016-05-17T12:44:22+CEST
 # command: gcloud preview app deploy portal-web.yaml
 # args:
 #   --project vertnet-portal  # Optional, no need if gcloud is configured to use this project
