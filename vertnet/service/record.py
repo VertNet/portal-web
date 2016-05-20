@@ -47,16 +47,18 @@ class RecordService(remote.Service):
         params = json.dumps({
             "q": "id:%s" % message.id,
             "l": 1,
-            "o": ORIGIN
+            "o": ORIGIN,
+            "latlon": self.cityLatLong,
+            "user_agent": self.user_agent,
+            "country": self.country
         })
         params = {"q": params}
         url = "?".join([SEARCH_API, urllib.urlencode(params)])
         res = urllib2.urlopen(url=url)
         content = json.loads(res.read())
         recs = content['recs']
-        cursor = content['cursor']
-        count = content['matching_records']
-        version = content['api_version']
+        # cursor = content['cursor']
+        # count = content['matching_records']
 
         return RecordPayload(id=message.id, json=json.dumps(recs[0]))
 
@@ -67,13 +69,15 @@ class RecordService(remote.Service):
         if message.cursor:
             curs = Cursor(urlsafe=message.cursor)
         q = json.loads(message.q)
-        # taskqueue.add(url='/apitracker', params=dict(query=message.q), 
+        # taskqueue.add(url='/apitracker', params=dict(query=message.q),
         #     queue_name="apitracker")
         response = record_list(message.limit, curs, q, message=True)
         return response
 
     def initialize_request_state(self, state):
         self.cityLatLong = state.headers.get('X-AppEngine-CityLatLong')
+        self.country = state.headers.get('X-AppEngine-Country')
+        self.user_agent = state.headers.get('User-Agent')
 #        logging.info('CITY_LAT_LONG %s\nVersion: %s' % (state.headers, RECORD_VERSION))
 
     @remote.method(RecordList, RecordList)
@@ -100,7 +104,10 @@ class RecordService(remote.Service):
             "l": limit,
             "s": sort,
             "c": message.cursor,
-            "o": ORIGIN
+            "o": ORIGIN,
+            "latlon": self.cityLatLong,
+            "user_agent": self.user_agent,
+            "country": self.country
         })
         params = {"q": params}
         url = "?".join([SEARCH_API, urllib.urlencode(params)])
