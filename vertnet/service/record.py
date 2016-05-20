@@ -11,10 +11,17 @@ import urllib
 import urllib2
 import logging
 import json
+import os
 
 RECORD_VERSION='2016-05-17T09:29:00+CEST'
 
-SEARCH_API = "http://api-module.vertnet-portal.appspot.com/api/search"
+SEARCH_API = "http://api-module.vertnet-portal.appspot.com/api/v1/search"
+
+IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Development')
+if IS_DEV:
+    ORIGIN = 'portal-dev'
+else:
+    ORIGIN = 'portal-web'
 
 def record_list(limit, cursor, q, message=False):
     """Return CommentList or triple (comments, next_cursor, more)."""
@@ -37,7 +44,11 @@ class RecordService(remote.Service):
     def get(self, message):
         """Return a RecordList."""
         # recs, cursor, count, version = vnsearch.query('id:%s' % message.id, 1)
-        params = json.dumps({"q": "id:%s" % message.id, "l": 1})
+        params = json.dumps({
+            "q": "id:%s" % message.id,
+            "l": 1,
+            "o": ORIGIN
+        })
         params = {"q": params}
         url = "?".join([SEARCH_API, urllib.urlencode(params)])
         res = urllib2.urlopen(url=url)
@@ -56,8 +67,8 @@ class RecordService(remote.Service):
         if message.cursor:
             curs = Cursor(urlsafe=message.cursor)
         q = json.loads(message.q)
-        taskqueue.add(url='/apitracker', params=dict(query=message.q), 
-            queue_name="apitracker")
+        # taskqueue.add(url='/apitracker', params=dict(query=message.q), 
+        #     queue_name="apitracker")
         response = record_list(message.limit, curs, q, message=True)
         return response
 
@@ -88,7 +99,8 @@ class RecordService(remote.Service):
             "q": keywords,
             "l": limit,
             "s": sort,
-            "c": message.cursor
+            "c": message.cursor,
+            "o": ORIGIN
         })
         params = {"q": params}
         url = "?".join([SEARCH_API, urllib.urlencode(params)])
@@ -97,7 +109,7 @@ class RecordService(remote.Service):
         result = json.loads(result.read())
         logging.info(result.keys())
 
-        if len(result) == 9:
+        if len(result) == 8:
             # recs, cursor, count, query_version = result
             recs = result['recs']
             cursor = result['cursor']
@@ -111,27 +123,27 @@ class RecordService(remote.Service):
             else:
                 type = 'query-view'
 
-            apitracker_params = dict(
-                api_version=None, count=len(recs), download=None, downloader=None, 
-                error=None, latlon=self.cityLatLong, matching_records=count, 
-                query=keywords, query_version=query_version, 
-                request_source='SearchPortal', response_records=len(recs), 
-                res_counts=json.dumps(res_counts), type=type)
+            # apitracker_params = dict(
+            #     api_version=None, count=len(recs), download=None, downloader=None, 
+            #     error=None, latlon=self.cityLatLong, matching_records=count, 
+            #     query=keywords, query_version=query_version, 
+            #     request_source='SearchPortal', response_records=len(recs), 
+            #     res_counts=json.dumps(res_counts), type=type)
             
-            taskqueue.add(url='/apitracker', params=apitracker_params, 
-                queue_name="apitracker")
+            # taskqueue.add(url='/apitracker', params=apitracker_params, 
+            #     queue_name="apitracker")
         else:
             error = result[0].__class__.__name__
 
-            apitracker_params = dict(
-                api_version=None, count=0, download=None, downloader=None, 
-                error=error, latlon=self.cityLatLong, matching_records=0, 
-                query=keywords, query_version=query_version, 
-                request_source='SearchPortal', response_records=0, 
-                res_counts=json.dumps({}), type='query')
+            # apitracker_params = dict(
+            #     api_version=None, count=0, download=None, downloader=None, 
+            #     error=error, latlon=self.cityLatLong, matching_records=0, 
+            #     query=keywords, query_version=query_version, 
+            #     request_source='SearchPortal', response_records=0, 
+            #     res_counts=json.dumps({}), type='query')
 
-            taskqueue.add(url='/apitracker', params=apitracker_params, 
-                queue_name="apitracker")
+            # taskqueue.add(url='/apitracker', params=apitracker_params, 
+            #     queue_name="apitracker")
             response = RecordList(error=unicode(error))
             return response
 

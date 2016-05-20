@@ -42,7 +42,7 @@ define([
     initialize: function (options, app) {
       this.app = app;
       this.NUMBER_FOUND_ACCURACY = 10000;
-      // this.DOWNLOAD_THRES = 1000;
+      // this.DOWNLOAD_THRES = 1000;  // removed until efficient 'count' is implemented
       this.DOWNLOAD_THRES = 0;
       this.PAGE_SIZE = 100; // For optimal browser performance
 //      this.PAGE_SIZE = 400; // For optimal query performance
@@ -55,7 +55,7 @@ define([
       this.countLoaded = 0;
       this.model = new SearchModel();
       this.spatialSearch = false;
-      this.DOWNLOAD_URL = 'http://api-module.vertnet-portal.appspot.com/api/download'
+      this.DOWNLOAD_URL = 'http://api-module.vertnet-portal.appspot.com/api/v1/download'
       mps.publish('spin', [true]);
     },
 
@@ -975,7 +975,8 @@ define([
             "q": this.keywords.join(" "),  // query parameters
             "e": email,                    // email to send notification to
             "n": name.replace(/ /g,'_'),   // name of the download file
-            "r": count                     // record count (for direct download)
+            "r": count,                    // record count (for direct download)
+            "o": "portal-web"              // request origin
           })
         }
 

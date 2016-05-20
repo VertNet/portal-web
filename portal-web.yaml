@@ -78,8 +78,8 @@ handlers:
 # - url: /service/download.*
 #   script: vertnet.service.download.api
 
-- url: /apitracker.*
-  script: vertnet.service.tracker.api
+# - url: /apitracker.*
+#   script: vertnet.service.tracker.api
 
 - url: /service/rpc/record.*
   script: vertnet.service.record.rpc
