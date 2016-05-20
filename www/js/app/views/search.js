@@ -959,24 +959,21 @@ define([
     },
 
     _submitDownload: function(e) {
+
         this._explodeKeywords();
         var email = this.$('#emailval').val();
         var name = this.$('#nameval').val();
         var count = this.count; 
         var error = false;
-        // var request = {
-        //   c: count,
-        //   e: email, 
-        //   n: name.replace(/ /g,'_'), 
-        //   q: JSON.stringify({"q":this.keywords.join(" ")})
-        // }
         var request = {
           q: JSON.stringify({
-            "q": this.keywords.join(" "),  // query parameters
-            "e": email,                    // email to send notification to
-            "n": name.replace(/ /g,'_'),   // name of the download file
-            "r": count,                    // record count (for direct download)
-            "o": "portal-web"              // request origin
+            "q": this.keywords.join(" "),       // query parameters
+            "e": email,                         // email to send notification to
+            "n": name.replace(/ /g,'_'),        // name of the download file
+            "r": count,                         // record count (for direct download)
+            "o": "portal-web",                  // request origin
+            // "user_agent": navigator.userAgent,  // User-Agent of the request
+
           })
         }
 
