@@ -1,1 +1,1 @@
-gcloud preview app deploy --version prod --promote portal-web.yaml
+gcloud preview app deploy --version prod --promote --stop-previous-version --verbosity info portal-web.yaml
